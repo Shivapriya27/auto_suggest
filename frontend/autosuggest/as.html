@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto Suggest</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial, sans-serif;
+            background-color:white;
+        }
+
+        .left-bar{
+            position:fixed;
+            top:20px;
+            left:20px;
+            font-size:18px;
+        }
+
+        .right-bar{
+            position:fixed;
+            top:20px;
+            right:20px;
+            font-size:18px;
+        }
+
+        #box{
+            width:500px;
+            margin:80px auto;
+            text-align:center;
+        }
+
+        h1{
+            margin-bottom:10px;
+        }
+
+        #being{
+            color:blue;
+        }
+
+        #infinity{
+            color:black;
+        }
+
+        #search{
+            width:350px;
+            margin:30px auto;
+            border:1px solid gray;
+            border-radius:25px;
+            display:flex;
+            align-items:center;
+            padding:8px 15px;
+        }
+
+        #icon{
+            font-size:18px;
+            color:gray;
+            margin-right:10px;
+        }
+
+        #search input{
+            width:100%;
+            border:none;
+            outline:none;
+            font-size:16px;
+        }
+
+        #suggestions-box{
+            width:380px;
+            margin:10px auto;
+            border:1px solid lightgray;
+            border-radius:10px;
+            text-align:left;
+            background:white;
+        }
+
+        .suggestion{
+            padding:10px;
+            border-bottom:1px solid #ddd;
+            cursor:pointer;
+        }
+
+        .suggestion:last-child{
+            border-bottom:none;
+        }
+
+        .suggestion:hover{
+            background:#f2f2f2;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <span class="left-bar">&#9881; Settings</span>
+
+    <span class="right-bar">&#9679; Online | 🕒 0 ms</span>
+
+    <div id="box">
+
+        <h1>
+            <span id="being">Being</span>
+            <span id="infinity">Infinity</span>
+        </h1>
+
+        <p>One million planets. Four algorithms. Prefix Based Auto Suggest.</p>
+
+        <div id="search">
+            <span id="icon">&#128269;</span>
+            <input type="text" id="searchInput" placeholder="Start typing to search...">
+        </div>
+
+        <div id="suggestions-box"></div>
+
+    </div>
+
+<script>
+
+var searchBox = document.getElementById("searchInput");
+var suggestionBox = document.getElementById("suggestions-box");
+
+searchBox.addEventListener("input", function(){
+
+    var inputValue = this.value.trim();
+
+    if(inputValue.length == 0){
+        suggestionBox.innerHTML = "";
+        return;
+    }
+
+    var url =
+    "https://autosuggest-backend.onrender.com/api/autosuggest?q="
+    + inputValue +
+    "&algorithm=brute&limit=10&weighted=false";
+
+    fetch(url)
+    .then(function(response){
+        return response.json();
+    })
+    .then(function(data){
+
+        console.log(data);
+
+        var resultArray = data.results;
+        var html = "";
+
+        for(var i=0;i<resultArray.length;i++)
+        {
+            html += "<div class='suggestion'>" +
+                    resultArray[i].text +
+                    "</div>";
+        }
+
+        suggestionBox.innerHTML = html;
+
+    })
+    .catch(function(error){
+        console.log(error);
+    });
+
+});
+
+</script>
+
+</body>
+</html>
